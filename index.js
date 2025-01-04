@@ -10,7 +10,7 @@ app.get("/", (req, res) => {
   res.send("Hello There");
 });
 
-app.post("/todo", async (req, res) => {
+app.post("/createTodo", async (req, res) => {
   const parsedData = createTodo.safeParse(req.body);
   if (!parsedData.success) {
     return res.status(401).json({
@@ -18,21 +18,20 @@ app.post("/todo", async (req, res) => {
     });
   }
 
-  await todo
-    .create({
-      title: parsedData.title,
-      description: parsedData.description,
-      completde: false,
-    })
-    .save();
+  const savedData = await todo.create({
+    title: parsedData.data.title,
+    description: parsedData.data.description,
+    completed: false,
+  });
 
   res.json({
     msg: "Todo create successfully",
+    todo: savedData,
   });
 });
 
 app.get("/todos", async (req, res) => {
-  const todos = todo.find({});
+  const todos = await todo.find({});
   console.log(todos);
   res.status(200).json({ todos });
 });
