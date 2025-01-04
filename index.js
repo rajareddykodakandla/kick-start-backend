@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const { createTodo, updateTodo } = require("./types");
+const { todo } = require("./db");
 
 app.use(express.json());
 
@@ -8,13 +9,22 @@ app.get("/", (req, res) => {
   res.send("Hello There");
 });
 
-app.post("/todo", (req, res) => {
+app.post("/todo", async (req, res) => {
   const parsedData = createTodo.safeParse(req.body);
   if (!parsedData.success) {
     return res.status(401).json({
       msg: "You sent the wrong inputs",
     });
   }
+
+  await todo.create({
+    title: parsedData.title,
+    description: parsedData.description,
+  });
+
+  res.json({
+    msg: "Todo create successfully",
+  });
 });
 
 app.get("/todos", (req, res) => { });
