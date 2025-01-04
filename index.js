@@ -44,9 +44,9 @@ app.put("/completed", async (req, res) => {
     });
   }
 
-  await todo.update(
+  const updatedTodo = await todo.updateOne(
     {
-      _id: req.body.id,
+      _id: parsedData.data.id,
     },
     {
       completed: true,
@@ -55,6 +55,7 @@ app.put("/completed", async (req, res) => {
 
   res.status(200).json({
     msg: "Todo marked as completed",
+    todo: updatedTodo,
   });
 });
 
