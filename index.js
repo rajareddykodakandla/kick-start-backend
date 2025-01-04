@@ -17,25 +17,45 @@ app.post("/todo", async (req, res) => {
     });
   }
 
-  await todo.create({
-    title: parsedData.title,
-    description: parsedData.description,
-  });
+  await todo
+    .create({
+      title: parsedData.title,
+      description: parsedData.description,
+      completde: false,
+    })
+    .save();
 
   res.json({
     msg: "Todo create successfully",
   });
 });
 
-app.get("/todos", (req, res) => { });
+app.get("/todos", async (req, res) => {
+  const todos = todo.find({});
+  console.log(todos);
+  res.status(200).json({ todos });
+});
 
-app.put("/completed", (req, res) => {
+app.put("/completed", async (req, res) => {
   const parsedData = updateTodo.safeParse(req.body);
   if (!parsedData.success) {
     return res.status(401).json({
       msg: "You sent the wrong inputs",
     });
   }
+
+  await todo.update(
+    {
+      _id: req.body.id,
+    },
+    {
+      completed: true,
+    },
+  );
+
+  res.status(200).json({
+    msg: "Todo marked as completed",
+  });
 });
 
 app.use((err, req, res, next) => {
