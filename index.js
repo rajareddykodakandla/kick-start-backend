@@ -1,16 +1,19 @@
 require("dotenv").config();
+const cors = require("cors");
 const express = require("express");
 const app = express();
 const { createTodo, updateTodo } = require("./types");
 const { todo } = require("./db");
 
 app.use(express.json());
+app.use(cors({}));
 
 app.get("/", (req, res) => {
   res.send("Hello There");
 });
 
 app.post("/createTodo", async (req, res) => {
+  console.log("body", req.body);
   const parsedData = createTodo.safeParse(req.body);
   if (!parsedData.success) {
     return res.status(401).json({
@@ -37,6 +40,7 @@ app.get("/todos", async (req, res) => {
 });
 
 app.put("/completed", async (req, res) => {
+  console.log("req.body", req.body);
   const parsedData = updateTodo.safeParse(req.body);
   if (!parsedData.success) {
     return res.status(401).json({
